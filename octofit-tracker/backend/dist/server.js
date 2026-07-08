@@ -5,7 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
-const api_1 = require("./src/config/api");
+const codespaceName = process.env.CODESPACE_NAME;
+const apiBaseUrl = codespaceName
+    ? `https://${codespaceName}-8000.app.github.dev`
+    : 'http://localhost:8000';
 const app = (0, express_1.default)();
 const port = process.env.PORT || 8000;
 const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/octofit_db';
@@ -17,7 +20,7 @@ const createResourceRoutes = (resource) => {
             resource,
             count: 0,
             message: `${resource} endpoint ready`,
-            apiBaseUrl: api_1.apiBaseUrl,
+            apiBaseUrl,
         });
     });
     app.get(`${basePath}/:id`, (req, res) => {
@@ -25,7 +28,7 @@ const createResourceRoutes = (resource) => {
             resource,
             id: req.params.id,
             message: `${resource} item retrieved`,
-            apiBaseUrl: api_1.apiBaseUrl,
+            apiBaseUrl,
         });
     });
     app.post(basePath, (req, res) => {
@@ -33,12 +36,12 @@ const createResourceRoutes = (resource) => {
             resource,
             data: req.body,
             message: `${resource} created`,
-            apiBaseUrl: api_1.apiBaseUrl,
+            apiBaseUrl,
         });
     });
 };
 app.get('/api/health', (_req, res) => {
-    res.json({ status: 'ok', service: 'octofit-backend', apiBaseUrl: api_1.apiBaseUrl });
+    res.json({ status: 'ok', service: 'octofit-backend', apiBaseUrl });
 });
 createResourceRoutes('users');
 createResourceRoutes('teams');
@@ -51,7 +54,7 @@ async function startServer() {
         console.log('Connected to MongoDB');
         app.listen(port, () => {
             console.log(`Backend listening on port ${port}`);
-            console.log(`API base URL: ${api_1.apiBaseUrl}`);
+            console.log(`API base URL: ${apiBaseUrl}`);
         });
     }
     catch (error) {
