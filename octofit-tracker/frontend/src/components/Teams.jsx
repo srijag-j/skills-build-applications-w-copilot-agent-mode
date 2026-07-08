@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 
+// Expected Codespaces API endpoint pattern:
+// https://${import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev/api/teams
 const BASE_URL = getApiBaseUrl('teams')
 
 function getApiBaseUrl(resource) {
